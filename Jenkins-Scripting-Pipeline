@@ -1,0 +1,63 @@
+pipeline{
+    agent any
+    environment{
+        name='nisar'
+    }
+    parameters{
+        string(name: 'person', defaultValue: 'Nisar',description: 'Full Name?')
+        booleanParam(name: 'isMale', defaultValue: 'true',description: '')
+        choice(name: 'City', choices: ['Islamabad','Karachi','Lahore'], description: '')
+    }
+    stages{
+        stage('run commands') {
+	        steps {
+		        sh '''
+                ls
+                pwd
+                date
+                '''
+	        }
+        }
+	    stage('Environment variable'){
+	        steps {
+	            sh 'echo "$BUILD_ID"'
+	            sh 'echo "$name"'
+	        }
+	     
+	   }
+	    stage('Parameters'){
+	        steps {
+	            sh 'echo "Display on test stage"'
+	            sh 'echo "$person"'
+	            sh 'echo "$City"'
+	         }
+          }
+        stage('Continue ?'){
+             input {
+                message "Should we continue ?"
+                ok "Yes we should"
+             }
+           
+	        steps {
+	            sh 'echo "Display on test stage"'
+	        }
+       }
+       stage('Deploy in Production'){
+	        steps {
+	            sh 'echo "Display on Production"'
+	        }
+       }
+    } 
+    post{
+        always{
+            echo 'It will be run alway'
+        }
+        failure{
+            echo 'its runs when Failuer'
+        }
+        success{
+            echo 'Its runs when success'
+        }
+    }
+ }
+
